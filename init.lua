@@ -190,6 +190,19 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- ----------------------------------------------------------------------------
+-- 【专属核心优化】：跨端系统剪贴板专属通道 (配合上面默认的剪贴板独立)
+-- ----------------------------------------------------------------------------
+-- Normal 模式下：敲 空格+y 复制当前整行到 macOS 系统剪切板 (锁定大写 Y 一击必中)
+vim.keymap.set('n', '<leader>y', '"+Y', { desc = '[Y]ank line to OS clipboard', silent = true })
+
+-- Visual 模式下：选中一段文本后，敲 空格+y 将选中区域丢进 macOS 系统剪切板
+vim.keymap.set('v', '<leader>y', '"+y', { desc = '[Y]ank selection to OS clipboard', silent = true })
+
+-- 从 macOS 系统剪切板一键贴进 Neovim 内部 (同时支持 Normal 和 Visual 模式)
+vim.keymap.set({ 'n', 'v' }, '<leader>p', '"+p', { desc = '[P]aste from OS clipboard', silent = true })
+-- ----------------------------------------------------------------------------
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -913,9 +926,10 @@ require('lazy').setup({
     config = function()
       require('im_select').setup {
         default_im_select = 'com.apple.keylayout.US',
-        -- default_command = '/usr/local/bin/macism',
-        default_command = '/Users/linht/.config/vim/bundle/smartim/plugin/im-select',
-        set_default_events = { 'VimEnter', 'FocusGained', 'InsertLeave', 'CmdlineLeave' },
+        default_command = '/usr/local/bin/macism',
+        -- default_command = '/Users/linht/.config/vim/bundle/smartim/plugin/im-select',
+        -- set_default_events = { 'VimEnter', 'FocusGained', 'InsertLeave', 'CmdlineLeave' },
+        set_default_events = { 'InsertLeave', 'CmdlineLeave' },
         set_previous_events = { 'InsertEnter' },
         keep_quiet_on_no_binary = false,
         async_switch_im = true,
